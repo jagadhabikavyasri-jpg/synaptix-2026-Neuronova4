@@ -4,10 +4,8 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>VitalSense AI — Dashboard</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet"/>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;700&display=swap');
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 :root{
   --bg:#080d14;--surface:#0e1724;--card:#121e2e;--border:#1e3354;
@@ -16,225 +14,279 @@
   --mono:'Space Mono',monospace;--body:'DM Sans',sans-serif;
 }
 html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:var(--body);}
-/* ── Sidebar ── */
 .layout{display:flex;min-height:100vh;}
-.sidebar{width:220px;flex-shrink:0;background:linear-gradient(180deg,#060c14,#0a1828);
+
+/* ── SIDEBAR ── */
+.sidebar{width:230px;flex-shrink:0;background:linear-gradient(180deg,#060c14,#0a1828);
   border-right:1px solid var(--border);padding:1.5rem 1rem;
-  display:flex;flex-direction:column;gap:.5rem;}
+  display:flex;flex-direction:column;gap:.4rem;}
 .sidebar-logo{font-family:var(--mono);font-size:1rem;font-weight:700;
   background:linear-gradient(90deg,var(--cyan),var(--green));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
-.sidebar-label{font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;
-  color:var(--cyan);text-transform:uppercase;margin-bottom:.5rem;margin-top:1rem;}
+  margin-bottom:1.2rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
+.sidebar-label{font-family:var(--mono);font-size:.55rem;letter-spacing:.18em;
+  color:var(--cyan);text-transform:uppercase;margin:.8rem 0 .3rem;}
 .nav-btn{display:block;width:100%;text-align:left;background:transparent;
-  border:1px solid transparent;border-radius:8px;padding:.6rem .9rem;cursor:pointer;
-  font-family:var(--mono);font-size:.65rem;letter-spacing:.08em;color:var(--muted);
+  border:1px solid transparent;border-radius:8px;padding:.55rem .9rem;cursor:pointer;
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.06em;color:var(--muted);
   transition:all .2s;text-decoration:none;}
 .nav-btn:hover,.nav-btn.active{background:var(--card);border-color:var(--border);color:var(--cyan);}
+
+/* stream status dot */
+.stream-row{display:flex;align-items:center;gap:6px;padding:.4rem .9rem;
+  font-family:var(--mono);font-size:.55rem;color:var(--muted);}
+.sdot{width:7px;height:7px;border-radius:50%;background:#1e3354;flex-shrink:0;}
+.sdot.live{background:var(--green);animation:sdPulse 1.2s infinite;}
+@keyframes sdPulse{0%,100%{box-shadow:0 0 0 0 rgba(0,255,157,.5)}50%{box-shadow:0 0 0 5px rgba(0,255,157,0)}}
+
 .status-box{background:var(--card);border:1px solid var(--border);border-radius:8px;
-  padding:.9rem;margin-top:auto;font-family:var(--mono);font-size:.55rem;
-  color:var(--muted);line-height:1.9;}
-.status-box b{color:var(--cyan);display:block;margin-bottom:.4rem;}
-.s-ok{color:var(--green);}
-.back-btn{display:block;text-align:center;margin-top:1rem;
-  font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;
-  color:var(--muted);text-decoration:none;padding:.5rem;border-radius:6px;
-  border:1px solid var(--border);transition:all .2s;}
+  padding:.75rem;margin-top:auto;font-family:var(--mono);font-size:.53rem;
+  color:var(--muted);line-height:2;}
+.status-box b{color:var(--cyan);display:block;margin-bottom:.3rem;}
+.s-ok{color:var(--green);}.s-warn{color:var(--warn);}
+.back-btn{display:block;text-align:center;margin-top:.8rem;
+  font-family:var(--mono);font-size:.58rem;color:var(--muted);text-decoration:none;
+  padding:.45rem;border-radius:6px;border:1px solid var(--border);transition:all .2s;}
 .back-btn:hover{border-color:var(--cyan);color:var(--cyan);}
-/* ── Main ── */
-.main{flex:1;padding:1.8rem 2rem;overflow-y:auto;}
+
+/* ── MAIN ── */
+.main{flex:1;padding:1.6rem 1.8rem;overflow-y:auto;}
 .page-header{display:flex;align-items:flex-start;justify-content:space-between;
-  margin-bottom:1.5rem;padding-bottom:1.2rem;border-bottom:1px solid var(--border);}
-.page-title{font-family:var(--mono);font-size:1.8rem;font-weight:700;
+  margin-bottom:1.4rem;padding-bottom:1.1rem;border-bottom:1px solid var(--border);}
+.page-title{font-family:var(--mono);font-size:1.7rem;font-weight:700;
   background:linear-gradient(90deg,var(--cyan),var(--green));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.page-sub{font-family:var(--mono);font-size:.65rem;letter-spacing:.16em;
-  color:var(--muted);text-transform:uppercase;margin-top:2px;}
-.badge{display:inline-block;background:rgba(0,255,157,.12);color:var(--green);
+.page-sub{font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;color:var(--muted);margin-top:2px;}
+.online-badge{display:inline-block;background:rgba(0,255,157,.12);color:var(--green);
   border:1px solid rgba(0,255,157,.3);border-radius:20px;padding:4px 14px;
-  font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;}
-/* ── Section head ── */
-.section-head{font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;}
+.section-head{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;
   text-transform:uppercase;color:var(--cyan);border-left:3px solid var(--cyan);
-  padding-left:10px;margin:1.5rem 0 1rem;}
-/* ── Cards ── */
+  padding-left:10px;margin:1.4rem 0 .9rem;}
+.sep{border:none;border-top:1px solid var(--border);margin:1.6rem 0;}
+
+/* ── CARDS ── */
 .card{background:var(--card);border:1px solid var(--border);border-radius:12px;
-  padding:1.25rem 1.5rem;margin-bottom:1rem;position:relative;overflow:hidden;}
+  padding:1.1rem 1.3rem;margin-bottom:.9rem;position:relative;overflow:hidden;}
 .card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;
   background:linear-gradient(180deg,var(--cyan),transparent);}
 .card-danger::before{background:linear-gradient(180deg,var(--danger),transparent);}
 .card-warn::before  {background:linear-gradient(180deg,var(--warn),transparent);}
 .card-ok::before    {background:linear-gradient(180deg,var(--green),transparent);}
-/* ── Grid ── */
-.grid-2{display:grid;grid-template-columns:3fr 2fr;gap:1.2rem;}
-.grid-equal{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
-.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
-/* ── Metric ── */
-.metric-label{font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
-.metric-value{font-family:var(--mono);font-size:2rem;color:var(--cyan);font-weight:700;}
-.metric-value.large{font-size:3rem;}
+
+/* ── GRID ── */
+.grid-2{display:grid;grid-template-columns:3fr 2fr;gap:1rem;}
+.grid-eq{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;}
+
+/* ── METRIC ── */
+.metric-label{font-family:var(--mono);font-size:.56rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.metric-value{font-family:var(--mono);font-size:1.9rem;color:var(--cyan);font-weight:700;}
+.metric-value.large{font-size:2.8rem;}
 .metric-value.danger{color:var(--danger);}
-.metric-value.warn{color:var(--warn);}
 .metric-value.ok{color:var(--green);}
-/* ── Progress bar ── */
-.progress{background:#1e3354;border-radius:4px;height:6px;margin-top:8px;}
-.progress-fill{height:6px;border-radius:4px;transition:width .4s;}
-.fill-ok    {background:var(--green);}
-.fill-warn  {background:var(--warn);}
-.fill-danger{background:var(--danger);}
-/* ── Status pill ── */
-.pill{display:inline-block;border-radius:20px;padding:3px 14px;
-  font-family:var(--mono);font-size:.65rem;letter-spacing:.1em;margin-top:10px;}
+
+/* ── PROGRESS ── */
+.progress{background:#1e3354;border-radius:4px;height:5px;margin-top:7px;}
+.progress-fill{height:5px;border-radius:4px;transition:width .5s;}
+.fill-ok{background:var(--green);}.fill-warn{background:var(--warn);}.fill-danger{background:var(--danger);}
+
+/* ── PILLS ── */
+.pill{display:inline-block;border-radius:20px;padding:2px 12px;
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;margin-top:8px;}
 .pill-ok    {background:rgba(0,255,157,.12);color:var(--green);border:1px solid rgba(0,255,157,.3);}
 .pill-warn  {background:rgba(255,184,0,.12) ;color:var(--warn) ;border:1px solid rgba(255,184,0,.3);}
 .pill-danger{background:rgba(255,69,96,.12) ;color:var(--danger);border:1px solid rgba(255,69,96,.3);}
-/* ── Camera frame ── */
-.cam-wrap{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;color:var(--cyan);}
-.cam-wrap img{width:100%;border-radius:8px;margin-top:.5rem;
-  border:1px solid var(--border);display:block;min-height:200px;background:#0a1520;}
-.pulse-dot{display:inline-block;width:8px;height:8px;background:var(--cyan);
-  border-radius:50%;margin-right:6px;vertical-align:middle;
-  animation:pulseDot 1.5s infinite;}
-@keyframes pulseDot{
-  0%{box-shadow:0 0 0 0 rgba(0,212,255,.6)}
-  70%{box-shadow:0 0 0 8px rgba(0,212,255,0)}
-  100%{box-shadow:0 0 0 0 rgba(0,212,255,0)}}
-/* ── Buttons ── */
+
+/* ── CAMERA (MJPEG <img>) ── */
+.cam-wrap{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;color:var(--cyan);}
+.cam-stream{width:100%;border-radius:8px;margin-top:.5rem;border:1px solid var(--border);
+  display:block;min-height:220px;background:var(--surface);object-fit:cover;}
+.cam-canvas{width:100%;border-radius:8px;margin-top:.5rem;border:1px solid var(--border);
+  display:block;height:240px;background:var(--surface);}
+
+/* ── PULSE DOT ── */
+.pulse-dot{display:inline-block;width:7px;height:7px;background:var(--cyan);
+  border-radius:50%;margin-right:5px;vertical-align:middle;animation:pDot 1.5s infinite;}
+@keyframes pDot{0%{box-shadow:0 0 0 0 rgba(0,212,255,.6)}70%{box-shadow:0 0 0 7px rgba(0,212,255,0)}100%{box-shadow:0 0 0 0 rgba(0,212,255,0)}}
+
+/* ── BUTTONS ── */
 .btn{background:transparent;border:1px solid var(--cyan);color:var(--cyan);
-  font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
-  padding:.55rem 1.4rem;border-radius:6px;cursor:pointer;transition:all .2s;}
-.btn:hover{background:var(--cyan);color:var(--bg);box-shadow:0 0 18px rgba(0,212,255,.35);}
+  font-family:var(--mono);font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:.5rem 1.2rem;border-radius:6px;cursor:pointer;transition:all .2s;}
+.btn:hover{background:var(--cyan);color:var(--bg);box-shadow:0 0 16px rgba(0,212,255,.35);}
 .btn:disabled{opacity:.4;cursor:not-allowed;}
 .btn-danger{border-color:var(--danger);color:var(--danger);}
-.btn-danger:hover{background:var(--danger);color:#fff;}
-/* ── Slider ── */
-input[type=range]{width:100%;accent-color:var(--cyan);margin:.5rem 0;}
-input[type=range]+.range-val{font-family:var(--mono);font-size:.65rem;color:var(--cyan);}
-/* ── HR Chart ── */
-#hr-chart-canvas{width:100%;height:140px;border-radius:8px;
-  background:var(--surface);border:1px solid var(--border);display:block;}
-/* ── Heatmap ── */
-#heatmap-wrap{overflow-x:auto;}
-table.heatmap{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:.62rem;}
-table.heatmap th{padding:6px 8px;color:var(--muted);text-align:center;font-weight:400;}
-table.heatmap td{padding:6px 8px;text-align:center;border-radius:4px;color:var(--text);}
-/* ── Separator ── */
-.sep{border:none;border-top:1px solid var(--border);margin:1.8rem 0;}
-/* ── Module pages ── */
-.module-page{display:none;}
-.module-page.active{display:block;}
-/* ── Loading spinner ── */
-.spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--border);
-  border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite;
-  margin-right:6px;vertical-align:middle;}
-@keyframes spin{to{transform:rotate(360deg)}}
-/* ── Small stat ── */
-.small-stat{margin-bottom:12px;}
-.small-stat .sl{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;color:var(--muted);}
-.small-stat .sv{font-family:var(--mono);font-size:1.35rem;font-weight:700;color:var(--cyan);}
-.small-stat .sv.ok{color:var(--green);}
-.small-stat .sv.warn{color:var(--warn);}
-.small-stat .sv.danger{color:var(--danger);}
+.btn-danger:hover{background:var(--danger);color:#fff;box-shadow:0 0 16px rgba(255,69,96,.35);}
+.btn-warn{border-color:var(--warn);color:var(--warn);}
+.btn-warn:hover{background:var(--warn);color:var(--bg);}
 
-/* ── SSE Stream indicator ── */
-.stream-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#4a6a8a;margin-right:5px;vertical-align:middle;}
-.stream-dot.live{background:var(--green);animation:pulseDot 1s infinite;}
-/* ── Alert panel ── */
-.alert-panel{position:fixed;top:0;right:0;width:380px;height:100vh;
+/* ── SLIDER ── */
+input[type=range]{width:100%;accent-color:var(--cyan);margin:.4rem 0;}
+
+/* ── CHART CANVAS ── */
+#hr-chart-canvas{width:100%;height:130px;display:block;border-radius:8px;
+  background:var(--surface);border:1px solid var(--border);}
+
+/* ── HEATMAP ── */
+table.heatmap{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:.6rem;}
+table.heatmap th{padding:5px 7px;color:var(--muted);text-align:center;font-weight:400;}
+table.heatmap td{padding:5px 7px;text-align:center;border-radius:3px;}
+
+/* ── SMALL STAT ── */
+.sstat{margin-bottom:10px;}
+.sstat .sl{font-family:var(--mono);font-size:.55rem;letter-spacing:.1em;color:var(--muted);}
+.sstat .sv{font-family:var(--mono);font-size:1.25rem;font-weight:700;color:var(--cyan);}
+.sstat .sv.ok{color:var(--green);}.sstat .sv.warn{color:var(--warn);}.sstat .sv.danger{color:var(--danger);}
+
+/* ── MODULE PAGE SWITCHING ── */
+.module-page{display:none;}.module-page.active{display:block;}
+
+/* ════════════════════════════════════════
+   OVERLAY — EMERGENCY PANEL
+════════════════════════════════════════ */
+.overlay{position:fixed;inset:0;z-index:300;background:rgba(5,10,16,.92);
+  backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;}
+.overlay.open{display:flex;}
+.overlay-box{background:var(--card);border-radius:16px;padding:2rem;
+  width:460px;max-width:95vw;max-height:90vh;overflow-y:auto;}
+.overlay-title{font-family:var(--mono);font-size:.85rem;letter-spacing:.1em;
+  margin-bottom:1.1rem;}
+.contact-row{background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:.75rem 1rem;margin-bottom:.55rem;
+  display:flex;justify-content:space-between;align-items:center;gap:.8rem;}
+.contact-row.first-contact{border-color:var(--danger);}
+.contact-info .cn{font-family:var(--mono);font-size:.68rem;color:var(--text);}
+.contact-info .cr{font-family:var(--mono);font-size:.55rem;color:var(--muted);}
+.call-link{background:rgba(255,69,96,.15);border:1px solid var(--danger);color:var(--danger);
+  font-family:var(--mono);font-size:.6rem;padding:.38rem .85rem;border-radius:6px;
+  cursor:pointer;text-decoration:none;transition:all .2s;white-space:nowrap;}
+.call-link:hover{background:var(--danger);color:#fff;}
+.call-link.primary{background:var(--danger);color:#fff;animation:callPulse 1.5s infinite;}
+@keyframes callPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,69,96,.5)}50%{box-shadow:0 0 0 10px rgba(255,69,96,0)}}
+
+/* ════════════════════════════════════════
+   ALERT SIDE PANEL
+════════════════════════════════════════ */
+.alert-panel{position:fixed;top:0;right:0;width:360px;height:100vh;
   background:#0a1520;border-left:1px solid var(--border);z-index:200;
-  transform:translateX(100%);transition:transform .3s ease;display:flex;flex-direction:column;}
+  transform:translateX(100%);transition:transform .3s;display:flex;flex-direction:column;}
 .alert-panel.open{transform:translateX(0);}
-.alert-panel-head{padding:1rem 1.2rem;border-bottom:1px solid var(--border);
+.alert-head{padding:.9rem 1.1rem;border-bottom:1px solid var(--border);
   display:flex;justify-content:space-between;align-items:center;}
-.alert-panel-title{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;color:var(--cyan);}
-.alert-list{flex:1;overflow-y:auto;padding:.8rem;}
+.alert-head-title{font-family:var(--mono);font-size:.65rem;letter-spacing:.14em;color:var(--cyan);}
+.alert-list{flex:1;overflow-y:auto;padding:.7rem;}
 .alert-item{background:var(--card);border:1px solid var(--border);border-radius:8px;
-  padding:.75rem 1rem;margin-bottom:.6rem;position:relative;overflow:hidden;}
+  padding:.65rem .9rem;margin-bottom:.5rem;position:relative;overflow:hidden;}
 .alert-item::before{content:'';position:absolute;left:0;top:0;width:3px;height:100%;}
 .alert-item.critical::before{background:var(--danger);}
 .alert-item.warning::before{background:var(--warn);}
 .alert-item.info::before{background:var(--cyan);}
-.alert-time{font-family:var(--mono);font-size:.55rem;color:var(--muted);}
-.alert-title-txt{font-family:var(--mono);font-size:.7rem;color:var(--text);margin:.2rem 0;}
-.alert-msg{font-family:var(--mono);font-size:.6rem;color:var(--muted);line-height:1.5;}
-.alert-badge-count{position:absolute;top:-4px;right:-4px;background:var(--danger);
-  color:#fff;border-radius:50%;width:18px;height:18px;font-size:.6rem;
-  display:none;align-items:center;justify-content:center;font-family:var(--mono);}
-.alert-badge-count.show{display:flex;}
-/* ── Emergency panel ── */
-.emergency-panel{position:fixed;inset:0;z-index:300;background:rgba(5,10,16,.9);
-  backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;}
-.emergency-panel.open{display:flex;}
-.emergency-box{background:var(--card);border:1px solid var(--danger);border-radius:16px;
-  padding:2rem;width:480px;max-width:95vw;}
-.emergency-title{font-family:var(--mono);font-size:.9rem;color:var(--danger);
-  letter-spacing:.1em;margin-bottom:1.2rem;}
-.contact-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-  padding:.8rem 1rem;margin-bottom:.6rem;display:flex;justify-content:space-between;align-items:center;}
-.contact-name{font-family:var(--mono);font-size:.7rem;color:var(--text);}
-.contact-role{font-family:var(--mono);font-size:.58rem;color:var(--muted);}
-.call-btn{background:rgba(255,69,96,.15);border:1px solid var(--danger);color:var(--danger);
-  font-family:var(--mono);font-size:.62rem;padding:.4rem .9rem;border-radius:6px;
-  cursor:pointer;text-decoration:none;transition:all .2s;}
-.call-btn:hover{background:var(--danger);color:#fff;}
-/* ── Chatbot ── */
-.chat-panel{position:fixed;bottom:1.5rem;right:1.5rem;width:360px;z-index:250;
-  background:var(--card);border:1px solid var(--border);border-radius:16px;
-  display:none;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,.5);
-  max-height:520px;}
+.a-time{font-family:var(--mono);font-size:.52rem;color:var(--muted);}
+.a-title{font-family:var(--mono);font-size:.67rem;color:var(--text);margin:.18rem 0;}
+.a-msg{font-family:var(--mono);font-size:.57rem;color:var(--muted);line-height:1.5;}
+
+/* unread badge */
+.ubadge{display:none;position:absolute;top:-5px;right:-5px;width:18px;height:18px;
+  background:var(--danger);color:#fff;border-radius:50%;font-family:var(--mono);
+  font-size:.58rem;align-items:center;justify-content:center;}
+.ubadge.show{display:flex;}
+
+/* ════════════════════════════════════════
+   AUTO-CALL BANNER
+════════════════════════════════════════ */
+#autocall-banner{position:fixed;top:0;left:0;right:0;z-index:500;
+  background:var(--danger);color:#fff;font-family:var(--mono);font-size:.78rem;
+  padding:.65rem 1.2rem;display:none;align-items:center;justify-content:space-between;
+  gap:1rem;box-shadow:0 2px 20px rgba(255,69,96,.6);}
+#autocall-banner.show{display:flex;}
+.autocall-info{display:flex;align-items:center;gap:.9rem;}
+.autocall-pulse{display:inline-block;width:10px;height:10px;border-radius:50%;
+  background:#fff;animation:acPulse .8s infinite;}
+@keyframes acPulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ════════════════════════════════════════
+   CHATBOT PANEL
+════════════════════════════════════════ */
+.chat-panel{position:fixed;bottom:1.2rem;right:1.2rem;width:340px;z-index:250;
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  display:none;flex-direction:column;max-height:500px;
+  box-shadow:0 8px 40px rgba(0,0,0,.5);}
 .chat-panel.open{display:flex;}
-.chat-head{padding:.8rem 1.1rem;border-bottom:1px solid var(--border);
+.chat-head{padding:.75rem 1rem;border-bottom:1px solid var(--border);
   display:flex;justify-content:space-between;align-items:center;}
-.chat-head-title{font-family:var(--mono);font-size:.65rem;letter-spacing:.1em;color:var(--cyan);}
-.chat-messages{flex:1;overflow-y:auto;padding:.8rem;display:flex;flex-direction:column;gap:.6rem;}
-.chat-msg{padding:.55rem .85rem;border-radius:10px;font-family:var(--mono);
-  font-size:.65rem;line-height:1.6;max-width:90%;}
+.chat-head-title{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;color:var(--cyan);}
+.chat-vitals-bar{padding:.4rem 1rem;background:rgba(0,212,255,.06);
+  border-bottom:1px solid var(--border);font-family:var(--mono);
+  font-size:.52rem;color:var(--muted);letter-spacing:.05em;}
+.chat-messages{flex:1;overflow-y:auto;padding:.75rem;display:flex;flex-direction:column;gap:.5rem;}
+.chat-msg{padding:.5rem .8rem;border-radius:10px;font-family:var(--mono);
+  font-size:.62rem;line-height:1.6;max-width:92%;}
 .chat-msg.user{background:rgba(0,212,255,.12);border:1px solid rgba(0,212,255,.2);
   color:var(--cyan);align-self:flex-end;}
 .chat-msg.bot{background:var(--surface);border:1px solid var(--border);
   color:var(--text);align-self:flex-start;}
-.chat-msg.bot.typing{color:var(--muted);}
-.chat-input-row{display:flex;gap:.5rem;padding:.8rem;border-top:1px solid var(--border);}
+.chat-msg.typing{color:var(--muted);}
+.chat-input-row{display:flex;gap:.45rem;padding:.7rem;border-top:1px solid var(--border);}
 .chat-input{flex:1;background:var(--surface);border:1px solid var(--border);
-  border-radius:6px;padding:.5rem .75rem;color:var(--text);font-family:var(--mono);
-  font-size:.65rem;outline:none;}
+  border-radius:6px;padding:.45rem .7rem;color:var(--text);font-family:var(--mono);
+  font-size:.62rem;outline:none;}
 .chat-input:focus{border-color:var(--cyan);}
 .chat-send{background:var(--cyan);border:none;color:var(--bg);border-radius:6px;
-  padding:.5rem .9rem;cursor:pointer;font-family:var(--mono);font-size:.7rem;}
-/* ── Floating action buttons ── */
-.fab-group{position:fixed;bottom:1.5rem;right:1.5rem;display:flex;flex-direction:column;
-  gap:.6rem;z-index:100;}
-.fab{width:48px;height:48px;border-radius:50%;border:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;font-size:1.2rem;
-  transition:all .2s;position:relative;}
+  padding:.45rem .85rem;cursor:pointer;font-family:var(--mono);font-size:.7rem;font-weight:700;}
+.chat-send:hover{box-shadow:0 0 12px rgba(0,212,255,.4);}
+
+/* ════════════════════════════════════════
+   FLOATING ACTION BUTTONS
+════════════════════════════════════════ */
+.fab-group{position:fixed;bottom:1.2rem;right:1.2rem;
+  display:flex;flex-direction:column;gap:.5rem;z-index:100;}
+.fab{width:46px;height:46px;border-radius:50%;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;transition:all .2s;position:relative;}
 .fab-chat{background:var(--cyan);color:var(--bg);}
-.fab-chat:hover{transform:scale(1.1);box-shadow:0 0 20px rgba(0,212,255,.5);}
+.fab-chat:hover{transform:scale(1.1);box-shadow:0 0 18px rgba(0,212,255,.5);}
 .fab-alert{background:var(--card);border:1px solid var(--border);color:var(--text);}
 .fab-alert:hover{border-color:var(--warn);color:var(--warn);}
 .fab-emergency{background:rgba(255,69,96,.15);border:1px solid var(--danger);color:var(--danger);}
-.fab-emergency:hover{background:var(--danger);color:#fff;transform:scale(1.1);}
-/* ── Notification toast ── */
-.toast{position:fixed;top:1.2rem;left:50%;transform:translateX(-50%) translateY(-80px);
+.fab-emergency:hover{background:var(--danger);color:#fff;transform:scale(1.08);}
+
+/* ════════════════════════════════════════
+   TOAST
+════════════════════════════════════════ */
+.toast{position:fixed;top:1rem;left:50%;transform:translateX(-50%) translateY(-90px);
   background:var(--card);border:1px solid var(--border);border-radius:10px;
-  padding:.75rem 1.4rem;font-family:var(--mono);font-size:.68rem;color:var(--text);
-  z-index:400;transition:transform .3s ease;white-space:nowrap;
-  box-shadow:0 4px 24px rgba(0,0,0,.4);}
+  padding:.65rem 1.3rem;font-family:var(--mono);font-size:.65rem;
+  z-index:600;transition:transform .3s;white-space:nowrap;
+  box-shadow:0 4px 24px rgba(0,0,0,.5);}
 .toast.show{transform:translateX(-50%) translateY(0);}
 .toast.critical{border-color:var(--danger);color:var(--danger);}
-.toast.warning{border-color:var(--warn);color:var(--warn);}
-.toast.info{border-color:var(--cyan);color:var(--cyan);}
-/* ── Live stream badge ── */
-.stream-status{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;
-  color:var(--muted);display:flex;align-items:center;gap:4px;}
-
+.toast.warning {border-color:var(--warn);  color:var(--warn);}
+.toast.info    {border-color:var(--cyan);  color:var(--cyan);}
 </style>
 </head>
 <body>
-<div class="layout">
 
-  <!-- ── Sidebar ── -->
+<!-- ═══════════ AUTO-CALL BANNER ═══════════ -->
+<div id="autocall-banner">
+  <div class="autocall-info">
+    <span class="autocall-pulse"></span>
+    <span id="autocall-text">📞 Auto-calling Dr. Sharma — Emergency detected</span>
+  </div>
+  <div style="display:flex;gap:.6rem;align-items:center;">
+    <a id="autocall-link" href="#" class="call-link primary" style="font-size:.65rem;">📞 CALL NOW</a>
+    <button onclick="dismissAutocall()" style="background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);
+      color:#fff;font-family:var(--mono);font-size:.6rem;padding:.3rem .7rem;border-radius:5px;cursor:pointer;">Dismiss</button>
+  </div>
+</div>
+
+<!-- ═══════════ TOAST ═══════════ -->
+<div class="toast" id="toast"></div>
+
+<div class="layout" style="margin-top:0;" id="main-layout">
+
+  <!-- ═══════════ SIDEBAR ═══════════ -->
   <aside class="sidebar">
     <div class="sidebar-logo">VitalSense AI</div>
 
@@ -243,57 +295,60 @@ table.heatmap td{padding:6px 8px;text-align:center;border-radius:4px;color:var(-
     <a class="nav-btn {% if module=='voice' %}active{% endif %}" href="/dashboard?module=voice">🎙 &nbsp; Voice Risk</a>
     <a class="nav-btn {% if module=='heart' %}active{% endif %}" href="/dashboard?module=heart">❤ &nbsp; Heart Monitor</a>
 
-    <div class="status-box">
-      <b>SYSTEM STATUS</b>
-      Camera Feed &nbsp;·&nbsp; <span class="s-ok">READY</span><br>
-      Audio Input &nbsp;·&nbsp; <span class="s-ok">READY</span><br>
-      ML Model &nbsp;&nbsp;&nbsp;·&nbsp; <span class="s-ok">LOADED</span><br>
-      Dataset &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;·&nbsp; <span class="s-ok">LOADED</span>
-    </div>
-
-    <div class="sidebar-label" style="margin-top:1rem;">◈ Tools</div>
-    <button class="nav-btn" onclick="openAlerts()">🔔 &nbsp; Alerts <span id="alert-count-badge" class="alert-badge-count"></span></button>
+    <div class="sidebar-label">◈ Tools</div>
+    <button class="nav-btn" onclick="openAlerts()" style="position:relative;">
+      🔔 &nbsp; Alert Log
+      <span class="ubadge" id="sidebar-badge" style="top:4px;right:8px;"></span>
+    </button>
     <button class="nav-btn" onclick="openEmergency()">🚨 &nbsp; Emergency</button>
     <button class="nav-btn" onclick="toggleChat()">🤖 &nbsp; AI Chatbot</button>
+    <button class="nav-btn" onclick="testNotif()" style="font-size:.58rem;">🔔 Test Notification</button>
 
-    <div class="stream-status" style="margin-top:1rem;padding:.5rem .9rem;">
-      <span class="stream-dot" id="stream-dot"></span>
-      <span id="stream-label">SSE Disconnected</span>
+    <div class="stream-row">
+      <span class="sdot" id="sse-dot"></span>
+      <span id="sse-label">Connecting…</span>
+    </div>
+
+    <div class="status-box">
+      <b>SYSTEM STATUS</b>
+      Camera &nbsp;·&nbsp; <span class="{{ 'has_camera' | ternary('s-ok','s-warn') if has_camera else 's-warn' }}">
+        {% if has_camera %}LIVE{% else %}SIM{% endif %}
+      </span><br>
+      Audio &nbsp;·&nbsp; <span class="{{ 's-ok' if has_audio else 's-warn' }}">
+        {% if has_audio %}READY{% else %}SIM{% endif %}
+      </span><br>
+      ML Model &nbsp;·&nbsp; <span class="s-ok">LOADED</span><br>
+      SSE Stream &nbsp;·&nbsp; <span class="s-ok" id="sse-status-txt">ACTIVE</span>
     </div>
 
     <a class="back-btn" href="/">← Back to Home</a>
   </aside>
 
-  <!-- ── Main ── -->
+  <!-- ═══════════ MAIN ═══════════ -->
   <main class="main">
-
-    <!-- Header -->
     <div class="page-header">
       <div>
         <div class="page-title">VitalSense AI</div>
-        <div class="page-sub">Preventive Health Monitoring · v2.0</div>
+        <div class="page-sub">Preventive Health Monitoring · v3.0</div>
       </div>
-      <span class="badge">● SYSTEM ONLINE</span>
+      <span class="online-badge" id="sys-badge">● SYSTEM ONLINE</span>
     </div>
 
-    <!-- ════════════════════════════════════════
-         MODULE: FACE SCANNER
-    ════════════════════════════════════════ -->
+    <!-- ════════ FACE SCANNER ════════ -->
     <div id="page-face" class="module-page {% if module=='face' %}active{% endif %}">
       <div class="section-head">◈ Face Health Scanner — Micro-Expression Analysis</div>
-
       <div class="grid-2">
-        <!-- Camera -->
         <div class="card">
           <div class="cam-wrap">
-            <span class="pulse-dot"></span>LIVE FEED
-            <span id="face-sim-badge" style="display:none;margin-left:8px;font-size:.55rem;color:#ffb800;letter-spacing:.1em;">◈ SIMULATION MODE</span>
-            <canvas id="face-canvas" width="640" height="360"
-              style="width:100%;border-radius:8px;margin-top:.5rem;border:1px solid var(--border);display:block;background:#080d14;"></canvas>
+            <span class="pulse-dot"></span>LIVE STREAM
+            <span id="face-sim-badge" style="display:none;margin-left:8px;font-size:.52rem;color:var(--warn);">◈ SIMULATION</span>
+            <!-- MJPEG stream — browser pulls directly from /stream/face -->
+            <img id="face-stream" class="cam-stream"
+                 src="" alt=""
+                 onerror="this.style.display='none';document.getElementById('face-canvas').style.display='block'"/>
+            <canvas id="face-canvas" class="cam-canvas" style="display:none;"></canvas>
           </div>
         </div>
-
-        <!-- Metrics -->
         <div>
           <div class="card" id="stress-card">
             <div class="metric-label">Stress Level</div>
@@ -309,45 +364,33 @@ table.heatmap td{padding:6px 8px;text-align:center;border-radius:4px;color:var(-
           </div>
         </div>
       </div>
-
-      <div style="display:flex;gap:1rem;margin-top:.5rem;">
-        <button class="btn" id="face-start-btn">▶ Start Camera</button>
+      <div style="display:flex;gap:.8rem;margin-top:.4rem;">
+        <button class="btn" id="face-start-btn">▶ Start Scanner</button>
         <button class="btn btn-danger" id="face-stop-btn" disabled>⏹ Stop</button>
       </div>
     </div>
 
-
-    <!-- ════════════════════════════════════════
-         MODULE: VOICE RISK
-    ════════════════════════════════════════ -->
+    <!-- ════════ VOICE RISK ════════ -->
     <div id="page-voice" class="module-page {% if module=='voice' %}active{% endif %}">
       <div class="section-head">◈ Voice Disease Risk Predictor — Acoustic Analysis</div>
-
-      <div class="card" style="margin-bottom:1.5rem;">
-        <span style="font-family:var(--mono);font-size:.65rem;color:var(--muted);">
-          Speak naturally for the selected duration. The system analyses vocal biomarkers
-          including pitch variance, jitter, shimmer, and harmonic-to-noise ratio to estimate
-          disease risk probability.
+      <div class="card" style="margin-bottom:1.2rem;">
+        <span style="font-family:var(--mono);font-size:.62rem;color:var(--muted);">
+          Speak naturally for the selected duration. The system analyses pitch variance,
+          jitter, shimmer, and harmonic-to-noise ratio to estimate disease risk probability.
         </span>
       </div>
-
       <div class="grid-2">
-        <!-- Controls -->
         <div class="card">
-          <div class="metric-label">Recording Settings</div>
-          <br>
-          <div class="metric-label">Duration</div>
-          <input type="range" id="duration-slider" min="3" max="10" value="5"
+          <div class="metric-label">Recording Duration</div><br>
+          <input type="range" id="dur-slider" min="3" max="10" value="5"
                  oninput="document.getElementById('dur-val').textContent=this.value+'s'"/>
-          <div class="range-val" id="dur-val">5s</div>
-          <br><br>
+          <div style="font-family:var(--mono);font-size:.62rem;color:var(--cyan);" id="dur-val">5s</div>
+          <br>
           <button class="btn" id="record-btn">⏺ Record Voice</button>
-          <div id="recording-status" style="margin-top:1rem;"></div>
+          <div id="rec-status" style="margin-top:.8rem;"></div>
         </div>
-
-        <!-- Results -->
         <div id="voice-results" style="display:none;">
-          <div class="grid-equal">
+          <div class="grid-eq">
             <div class="card" id="anxiety-card">
               <div class="metric-label">Anxiety Risk</div>
               <div class="metric-value" id="anxiety-val">—</div>
@@ -361,605 +404,461 @@ table.heatmap td{padding:6px 8px;text-align:center;border-radius:4px;color:var(-
               <div id="asthma-pill"></div>
             </div>
           </div>
-          <span class="pill pill-ok" id="voice-complete-badge" style="display:none;">✓ ANALYSIS COMPLETE — voice.wav saved</span>
         </div>
       </div>
     </div>
 
-
-    <!-- ════════════════════════════════════════
-         MODULE: HEART MONITOR
-    ════════════════════════════════════════ -->
+    <!-- ════════ HEART MONITOR ════════ -->
     <div id="page-heart" class="module-page {% if module=='heart' %}active{% endif %}">
-      <div class="section-head">◈ Camera Heart Risk Monitor — rPPG Analysis</div>
-
+      <div class="section-head">◈ Camera Heart Risk Monitor — rPPG + SSE Stream</div>
       <div class="grid-2">
-        <!-- Camera -->
         <div class="card">
           <div class="cam-wrap">
-            <span class="pulse-dot"></span>LIVE FEED
-            <span id="heart-sim-badge" style="display:none;margin-left:8px;font-size:.55rem;color:#ffb800;letter-spacing:.1em;">◈ SIMULATION MODE</span>
-            <canvas id="heart-canvas" width="640" height="360"
-              style="width:100%;border-radius:8px;margin-top:.5rem;border:1px solid var(--border);display:block;background:#080d14;"></canvas>
+            <span class="pulse-dot"></span>LIVE STREAM
+            <span id="heart-sim-badge" style="display:none;margin-left:8px;font-size:.52rem;color:var(--warn);">◈ SIMULATION</span>
+            <img id="heart-stream" class="cam-stream" src="" alt=""
+                 onerror="this.style.display='none';document.getElementById('heart-canvas').style.display='block'"/>
+            <canvas id="heart-canvas" class="cam-canvas" style="display:none;"></canvas>
           </div>
         </div>
-
-        <!-- Heart vitals -->
         <div>
           <div class="card" id="hr-card">
-            <div class="metric-label">Heart Rate</div>
+            <div class="metric-label">Heart Rate <span style="font-size:.5rem;color:var(--green);">● LIVE</span></div>
             <div class="metric-value large" id="hr-val">—<span style="font-size:1rem;color:var(--muted);"> BPM</span></div>
-            <div id="hr-status" style="margin-top:10px;"></div>
+            <div id="hr-status" style="margin-top:8px;"></div>
           </div>
-
           <div class="card">
-            <div class="metric-label" style="margin-bottom:12px;">Secondary Signals</div>
-            <div class="grid-equal">
+            <div class="metric-label" style="margin-bottom:10px;">Secondary Signals <span style="font-size:.5rem;color:var(--green);">● LIVE</span></div>
+            <div class="grid-eq">
               <div>
-                <div class="small-stat">
-                  <div class="sl">SpO₂</div>
-                  <div class="sv" id="spo2-val">—</div>
-                </div>
-                <div class="small-stat">
-                  <div class="sl">Activity</div>
-                  <div class="sv" id="activity-val">—</div>
-                </div>
+                <div class="sstat"><div class="sl">SpO₂</div><div class="sv" id="spo2-val">—</div></div>
+                <div class="sstat"><div class="sl">Activity</div><div class="sv" id="act-val">—</div></div>
               </div>
               <div>
-                <div class="small-stat">
-                  <div class="sl">Temp</div>
-                  <div class="sv" id="temp-val">—</div>
-                </div>
-                <div class="small-stat">
-                  <div class="sl">HRV</div>
-                  <div class="sv ok" id="hrv-val">—</div>
-                </div>
+                <div class="sstat"><div class="sl">Temp</div><div class="sv" id="temp-val">—</div></div>
+                <div class="sstat"><div class="sl">HRV</div><div class="sv ok" id="hrv-val">—</div></div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <div style="display:flex;gap:1rem;margin:.5rem 0 1.2rem;">
+      <div style="display:flex;gap:.8rem;margin:.4rem 0 1rem;">
         <button class="btn" id="heart-start-btn">▶ Start Monitor</button>
         <button class="btn btn-danger" id="heart-stop-btn" disabled>⏹ Stop</button>
       </div>
-
-      <!-- HR Chart -->
-      <div class="section-head">◈ Heart Rate Trend</div>
+      <div class="section-head">◈ Heart Rate Trend <span style="font-size:.5rem;color:var(--green);">● STREAMING</span></div>
       <div class="card">
         <canvas id="hr-chart-canvas"></canvas>
       </div>
     </div>
 
-
-    <!-- ════════════════════════════════════════
-         CORRELATION HEATMAP  (always visible)
-    ════════════════════════════════════════ -->
+    <!-- ════════ CORRELATION HEATMAP ════════ -->
     <hr class="sep"/>
     <div class="section-head">◈ Multi-Signal Correlation Analysis</div>
     <div class="card">
-      <div id="heatmap-wrap"><p style="font-family:var(--mono);font-size:.65rem;color:var(--muted);">Loading correlation data…</p></div>
+      <div id="heatmap-wrap"><p style="font-family:var(--mono);font-size:.62rem;color:var(--muted);">Loading…</p></div>
     </div>
 
   </main>
 </div><!-- /layout -->
 
+<!-- ═══════════ EMERGENCY OVERLAY ═══════════ -->
+<div class="overlay" id="emergency-overlay">
+  <div class="overlay-box">
+    <div class="overlay-title" style="color:var(--danger);">🚨 EMERGENCY RESPONSE</div>
+    <p style="font-family:var(--mono);font-size:.6rem;color:var(--muted);margin-bottom:1rem;">
+      First contact will be <strong style="color:var(--danger);">auto-called</strong> on emergency detection.
+      Tap CALL to call manually.
+    </p>
+    <div id="contact-list">
+      {% for c in emergency_contacts %}
+      <div class="contact-row {% if loop.first %}first-contact{% endif %}">
+        <div class="contact-info">
+          <div class="cn">{% if loop.first %}⭐ {% endif %}{{ c.name }}</div>
+          <div class="cr">{{ c.role }} · {{ c.phone }}</div>
+        </div>
+        <a class="call-link {% if loop.first %}primary{% endif %}" href="tel:{{ c.phone }}">
+          📞 CALL
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    <hr class="sep" style="margin:.9rem 0;">
+    <button class="btn btn-danger" style="width:100%;margin-bottom:.5rem;" onclick="manualEmergency()">
+      🚨 TRIGGER EMERGENCY + AUTO-CALL
+    </button>
+    <button class="btn" style="width:100%;" onclick="closeEmergency()">Cancel</button>
+  </div>
+</div>
+
+<!-- ═══════════ ALERT PANEL ═══════════ -->
+<div class="alert-panel" id="alert-panel">
+  <div class="alert-head">
+    <span class="alert-head-title">◈ ALERT LOG</span>
+    <div style="display:flex;gap:.5rem;">
+      <button class="btn" style="padding:.28rem .7rem;font-size:.56rem;" onclick="clearAlerts()">Clear</button>
+      <button class="btn btn-danger" style="padding:.28rem .7rem;font-size:.56rem;" onclick="closeAlerts()">✕</button>
+    </div>
+  </div>
+  <div class="alert-list" id="alert-list">
+    <p style="font-family:var(--mono);font-size:.62rem;color:var(--muted);text-align:center;padding:2rem;">
+      No alerts. Monitoring active.
+    </p>
+  </div>
+</div>
+
+<!-- ═══════════ CHATBOT ═══════════ -->
+<div class="chat-panel" id="chat-panel">
+  <div class="chat-head">
+    <span class="chat-head-title"><span class="pulse-dot"></span>AI HEALTH ASSISTANT</span>
+    <button onclick="toggleChat()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem;">✕</button>
+  </div>
+  <div class="chat-vitals-bar" id="chat-vitals-bar">Live vitals: connecting…</div>
+  <div class="chat-messages" id="chat-messages">
+    <div class="chat-msg bot">
+      Hello! I'm your VitalSense AI assistant.<br>
+      I can see your <strong>live streaming vitals</strong> in real time.<br>
+      Ask me anything about your health data.
+    </div>
+  </div>
+  <div class="chat-input-row">
+    <input class="chat-input" id="chat-input" type="text"
+           placeholder="Ask about your vitals…"
+           onkeydown="if(event.key==='Enter')sendChat()"/>
+    <button class="chat-send" onclick="sendChat()">▶</button>
+  </div>
+</div>
+
+<!-- ═══════════ FAB BUTTONS ═══════════ -->
+<div class="fab-group" id="fab-group">
+  <button class="fab fab-emergency" onclick="openEmergency()" title="Emergency">🚨</button>
+  <button class="fab fab-alert" onclick="openAlerts()" title="Alerts" style="position:relative;">
+    🔔<span class="ubadge" id="fab-badge"></span>
+  </button>
+  <button class="fab fab-chat" onclick="toggleChat()" title="AI Chatbot">🤖</button>
+</div>
 
 <script>
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════
 // UTILITIES
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════
+function cls(c){return c==='danger'?'danger':c==='warn'?'warn':'ok';}
+function pillHtml(c,t){return `<span class="pill pill-${c}">${t}</span>`;}
+function fillBar(el,pct,c){el.style.width=pct+'%';el.className='progress-fill fill-'+c;}
+function cardCls(el,c){el.className='card'+(c==='danger'?' card-danger':c==='warn'?' card-warn':' card-ok');}
 
-function cls(val){return val==='danger'?'danger':val==='warn'?'warn':'ok';}
-function pillHtml(c,label){return `<span class="pill pill-${c}">${label}</span>`;}
-function fillBar(el,pct,c){
-  el.style.width=pct+'%';
-  el.className='progress-fill fill-'+c;
+// ══════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════
+let toastTimer=null;
+function showToast(msg,level='info'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast '+level+' show';
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),4500);
 }
-function cardCls(card,c){
-  card.className='card';
-  if(c==='danger')card.classList.add('card-danger');
-  else if(c==='warn')card.classList.add('card-warn');
-  else card.classList.add('card-ok');
-}
 
-// ─────────────────────────────────────────────
-// FACE SCANNER
-// ─────────────────────────────────────────────
-
-// ── Canvas drawing utility ───────────────────
-function drawFeedCanvas(canvas, label, simulated){
-  const ctx=canvas.getContext('2d');
-  const W=canvas.width, H=canvas.height;
-  ctx.clearRect(0,0,W,H);
+// ══════════════════════════════════════
+// CANVAS SIMULATION (fallback when MJPEG not loading)
+// ══════════════════════════════════════
+function drawSimCanvas(canvas,label){
+  const ctx=canvas.getContext('2d'),W=canvas.width||640,H=canvas.height||240;
+  canvas.width=canvas.offsetWidth||W;
   ctx.fillStyle='#080d14';ctx.fillRect(0,0,W,H);
-  // Grid
-  ctx.strokeStyle='rgba(0,40,60,.6)';ctx.lineWidth=1;
+  ctx.strokeStyle='rgba(0,40,60,.5)';ctx.lineWidth=1;
   for(let x=0;x<W;x+=52){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
   for(let y=0;y<H;y+=52){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
-  // ECG
   const t=Date.now()/1000;
   ctx.beginPath();ctx.strokeStyle='rgba(0,200,240,.7)';ctx.lineWidth=2;
-  ctx.shadowColor='rgba(0,200,240,.5)';ctx.shadowBlur=6;
+  ctx.shadowColor='rgba(0,200,240,.4)';ctx.shadowBlur=5;
   for(let i=0;i<W;i+=2){
-    const phase=(i/W)*Math.PI*8+t*2;
-    const p=((phase%(2*Math.PI))+(2*Math.PI))%(2*Math.PI);
+    const ph=(i/W)*Math.PI*8+t*2,p=ph%(2*Math.PI);
     let v;
-    if(p<0.15)v=p/0.15*50;
-    else if(p<0.25)v=50*(1-(p-0.15)/0.1);
-    else if(p<0.35)v=-13*(1-(p-0.25)/0.1);
-    else v=Math.sin(phase)*5;
-    const y=H*0.6-v;
-    if(i===0)ctx.moveTo(i,y);else ctx.lineTo(i,y);
+    if(p<.15)v=p/.15*48;else if(p<.25)v=48*(1-(p-.15)/.1);
+    else if(p<.35)v=-12*(1-(p-.25)/.1);else v=Math.sin(ph)*5;
+    if(i===0)ctx.moveTo(i,H*.6-v);else ctx.lineTo(i,H*.6-v);
   }
   ctx.stroke();ctx.shadowBlur=0;
-  // Face bracket
-  const cx=W/2,cy=H/2-10,r=65;
+  const cx=W/2,cy=H/2-10,r=55;
   ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);
-  ctx.strokeStyle='rgba(0,200,240,.5)';ctx.lineWidth=1;ctx.stroke();
-  const ls=12;
+  ctx.strokeStyle='rgba(0,200,240,.4)';ctx.lineWidth=1;ctx.stroke();
+  const ls=10;
   [[cx-r,cy-r,1,1],[cx+r,cy-r,-1,1],[cx-r,cy+r,1,-1],[cx+r,cy+r,-1,-1]].forEach(([px,py,dx,dy])=>{
     ctx.beginPath();ctx.strokeStyle='#00ff9d';ctx.lineWidth=2;
     ctx.moveTo(px,py);ctx.lineTo(px+dx*ls,py);ctx.stroke();
     ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px,py+dy*ls);ctx.stroke();
   });
-  // Scan line
-  const scanY=cy-r+((Date.now()/16)%(r*2));
-  if(scanY>cy-r&&scanY<cy+r){
-    ctx.beginPath();ctx.strokeStyle='rgba(0,212,255,.25)';ctx.lineWidth=1;
-    ctx.moveTo(cx-r,scanY);ctx.lineTo(cx+r,scanY);ctx.stroke();
+  const sy=cy-r+((Date.now()/14)%(r*2));
+  if(sy>cy-r&&sy<cy+r){
+    ctx.beginPath();ctx.strokeStyle='rgba(0,212,255,.2)';ctx.lineWidth=1;
+    ctx.moveTo(cx-r,sy);ctx.lineTo(cx+r,sy);ctx.stroke();
   }
-  // Labels
-  ctx.font='12px IBM Plex Mono, monospace';
-  ctx.fillStyle='rgba(0,200,240,.9)';
-  ctx.fillText(label,16,22);
-  if(simulated){
-    ctx.font='10px IBM Plex Mono, monospace';
-    ctx.fillStyle='rgba(55,85,110,.9)';
-    ctx.fillText('SIMULATION — no camera on cloud server',16,H-12);
-  }
+  ctx.fillStyle='rgba(0,200,240,.8)';ctx.font='11px monospace';ctx.fillText(label,14,20);
+  ctx.fillStyle='rgba(55,85,110,.8)';ctx.font='9px monospace';
+  ctx.fillText('SIMULATION MODE',14,H-10);
 }
 
-let faceAnimId=null;
-function startFaceCanvasAnim(){
+let faceCanvasAnim=null,heartCanvasAnim=null;
+function startCanvasAnim(canvasId,label,animRef){
+  const c=document.getElementById(canvasId);
+  if(!c) return null;
+  let id=null;
+  (function loop(){id=requestAnimationFrame(loop);drawSimCanvas(c,label);})();
+  return id;
+}
+function stopAnim(id){if(id)cancelAnimationFrame(id);}
+
+// ══════════════════════════════════════
+// ① MJPEG STREAM — attach src to <img>
+// ══════════════════════════════════════
+let faceActive=false,heartActive=false;
+
+function startFaceStream(){
+  if(faceActive)return;faceActive=true;
+  const img=document.getElementById('face-stream');
   const canvas=document.getElementById('face-canvas');
-  if(faceAnimId)return;
-  (function loop(){faceAnimId=requestAnimationFrame(loop);drawFeedCanvas(canvas,'FACE SCANNER',true);})();
-}
-function stopFaceCanvasAnim(){cancelAnimationFrame(faceAnimId);faceAnimId=null;}
-
-let heartAnimId=null;
-function startHeartCanvasAnim(){
-  const canvas=document.getElementById('heart-canvas');
-  if(heartAnimId)return;
-  (function loop(){heartAnimId=requestAnimationFrame(loop);drawFeedCanvas(canvas,'HEART MONITOR',true);})();
-}
-function stopHeartCanvasAnim(){cancelAnimationFrame(heartAnimId);heartAnimId=null;}
-
-// Draw base64 image onto canvas
-function drawImageOnCanvas(canvas, b64){
-  const img=new Image();
+  // Start canvas anim immediately for visual feedback
+  canvas.style.display='block';img.style.display='none';
+  faceCanvasAnim=startCanvasAnim('face-canvas','FACE SCANNER',faceCanvasAnim);
+  // Attach MJPEG src — browser will show it when it loads
+  img.src='/stream/face?t='+Date.now();
   img.onload=()=>{
-    const ctx=canvas.getContext('2d');
-    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    canvas.style.display='none';img.style.display='block';
+    stopAnim(faceCanvasAnim);faceCanvasAnim=null;
+    document.getElementById('face-sim-badge').style.display='none';
   };
-  img.src='data:image/jpeg;base64,'+b64;
-}
-
-// ─────────────────────────────────────────────
-// FACE SCANNER
-// ─────────────────────────────────────────────
-
-let faceInterval=null;
-const stressVal   = document.getElementById('stress-val');
-const stressBar   = document.getElementById('stress-bar');
-const stressPill  = document.getElementById('stress-pill');
-const stressCard  = document.getElementById('stress-card');
-const fatigueVal  = document.getElementById('fatigue-val');
-const fatigueBar  = document.getElementById('fatigue-bar');
-const fatiguePill = document.getElementById('fatigue-pill');
-const fatigueCard = document.getElementById('fatigue-card');
-
-async function fetchFaceFrame(){
-  try{
-    const r=await fetch('/api/face/frame');
-    if(!r.ok)return;
-    const d=await r.json();
-    if(d.error)return;
-
-    // Show sim badge if no real camera
-    document.getElementById('face-sim-badge').style.display = d.simulated ? 'inline' : 'none';
-
-    if(d.simulated){
-      // Canvas animation already running — no need to draw static image
-    } else {
-      stopFaceCanvasAnim();
-      drawImageOnCanvas(document.getElementById('face-canvas'), d.image);
-    }
-
-    stressVal.textContent = d.stress+' / 100';
-    fillBar(stressBar, d.stress, cls(d.stress_cls));
-    stressPill.innerHTML = pillHtml(d.stress_cls, d.stress>70?'⚠ HIGH STRESS':d.stress>45?'△ MODERATE':'✓ NORMAL');
-    cardCls(stressCard, d.stress_cls);
-
-    fatigueVal.textContent = d.fatigue+' / 100';
-    fillBar(fatigueBar, d.fatigue, cls(d.fatigue_cls));
-    fatiguePill.innerHTML = pillHtml(d.fatigue_cls, d.fatigue>70?'⚠ HIGH FATIGUE':d.fatigue>45?'△ MODERATE':'✓ NORMAL');
-    cardCls(fatigueCard, d.fatigue_cls);
-  }catch(e){console.error('face frame error',e);}
-}
-
-document.getElementById('face-start-btn').addEventListener('click',()=>{
-  if(faceInterval)return;
-  startFaceCanvasAnim();  // immediate visual feedback
-  faceInterval=setInterval(fetchFaceFrame,1000);
-  fetchFaceFrame();
+  img.onerror=()=>{
+    canvas.style.display='block';img.style.display='none';
+    document.getElementById('face-sim-badge').style.display='inline';
+    if(!faceCanvasAnim) faceCanvasAnim=startCanvasAnim('face-canvas','FACE SCANNER',null);
+  };
+  // Poll metrics independently
+  faceMetricInterval=setInterval(fetchFaceMetrics,1500);fetchFaceMetrics();
   document.getElementById('face-start-btn').disabled=true;
   document.getElementById('face-stop-btn').disabled=false;
-});
-document.getElementById('face-stop-btn').addEventListener('click',()=>{
-  clearInterval(faceInterval);faceInterval=null;
-  stopFaceCanvasAnim();
+}
+
+function stopFaceStream(){
+  faceActive=false;
+  document.getElementById('face-stream').src='';
+  stopAnim(faceCanvasAnim);faceCanvasAnim=null;
+  clearInterval(faceMetricInterval);
   document.getElementById('face-start-btn').disabled=false;
   document.getElementById('face-stop-btn').disabled=true;
-});
-
-// ─────────────────────────────────────────────
-// VOICE RECORDER
-// ─────────────────────────────────────────────
-
-document.getElementById('record-btn').addEventListener('click',async()=>{
-  const btn=document.getElementById('record-btn');
-  const dur=parseInt(document.getElementById('duration-slider').value);
-  const status=document.getElementById('recording-status');
-
-  btn.disabled=true;
-  status.innerHTML=`
-    <div class="card card-warn" style="padding:.8rem 1rem;">
-      <span class="pulse-dot"></span>
-      <span style="font-family:var(--mono);font-size:.7rem;color:var(--warn);">RECORDING IN PROGRESS… ${dur}s</span>
-    </div>`;
-
-  try{
-    const r=await fetch('/api/voice/record',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({duration:dur})
-    });
-    const d=await r.json();
-
-    status.innerHTML='';
-    document.getElementById('voice-results').style.display='block';
-    document.getElementById('voice-complete-badge').style.display='inline-block';
-
-    // Anxiety
-    document.getElementById('anxiety-val').textContent=d.anxiety+'%';
-    fillBar(document.getElementById('anxiety-bar'),d.anxiety,cls(d.anxiety_cls));
-    document.getElementById('anxiety-pill').innerHTML=pillHtml(d.anxiety_cls,d.anxiety_lbl);
-    cardCls(document.getElementById('anxiety-card'),d.anxiety_cls);
-
-    // Asthma
-    document.getElementById('asthma-val').textContent=d.asthma+'%';
-    fillBar(document.getElementById('asthma-bar'),d.asthma,cls(d.asthma_cls));
-    document.getElementById('asthma-pill').innerHTML=pillHtml(d.asthma_cls,d.asthma_lbl);
-    cardCls(document.getElementById('asthma-card'),d.asthma_cls);
-
-  }catch(e){
-    status.innerHTML=`<span class="pill pill-danger">⚠ Recording failed: ${e.message}</span>`;
-  }
-  btn.disabled=false;
-});
-
-// ─────────────────────────────────────────────
-// HEART MONITOR + CHART
-// ─────────────────────────────────────────────
-
-let heartInterval=null;
-const hrHistory=[];
-const hrVal     =document.getElementById('hr-val');
-const hrStatus  =document.getElementById('hr-status');
-const hrCard    =document.getElementById('hr-card');
-const spo2Val   =document.getElementById('spo2-val');
-const tempVal   =document.getElementById('temp-val');
-const activityVal=document.getElementById('activity-val');
-const hrvVal    =document.getElementById('hrv-val');
-
-// Chart setup
-const chartCanvas=document.getElementById('hr-chart-canvas');
-const chartCtx=chartCanvas.getContext('2d');
-chartCanvas.width=chartCanvas.offsetWidth||800;
-chartCanvas.height=140;
-window.addEventListener('resize',()=>{
-  chartCanvas.width=chartCanvas.offsetWidth;drawChart();
-});
-
-function drawChart(){
-  const cw=chartCanvas.width,ch=chartCanvas.height;
-  chartCtx.clearRect(0,0,cw,ch);
-  if(hrHistory.length<2)return;
-
-  const min=Math.min(...hrHistory)-5;
-  const max=Math.max(...hrHistory)+5;
-  const scaleY=v=>(ch-20)-(v-min)/(max-min)*(ch-40)+10;
-  const scaleX=i=>i/(hrHistory.length-1)*cw;
-
-  // Grid lines
-  chartCtx.strokeStyle='rgba(30,51,84,.6)';chartCtx.lineWidth=1;
-  for(let y=0;y<=4;y++){
-    const py=10+(ch-40)*y/4;
-    chartCtx.beginPath();chartCtx.moveTo(0,py);chartCtx.lineTo(cw,py);chartCtx.stroke();
-  }
-
-  // Gradient fill
-  const grad=chartCtx.createLinearGradient(0,0,0,ch);
-  grad.addColorStop(0,'rgba(0,212,255,.25)');
-  grad.addColorStop(1,'rgba(0,212,255,0)');
-  chartCtx.beginPath();
-  chartCtx.moveTo(scaleX(0),ch);
-  hrHistory.forEach((v,i)=>chartCtx.lineTo(scaleX(i),scaleY(v)));
-  chartCtx.lineTo(scaleX(hrHistory.length-1),ch);
-  chartCtx.closePath();
-  chartCtx.fillStyle=grad;
-  chartCtx.fill();
-
-  // Line
-  chartCtx.beginPath();
-  hrHistory.forEach((v,i)=>{
-    if(i===0)chartCtx.moveTo(scaleX(i),scaleY(v));
-    else chartCtx.lineTo(scaleX(i),scaleY(v));
-  });
-  chartCtx.strokeStyle='#00d4ff';
-  chartCtx.lineWidth=2;
-  chartCtx.shadowColor='rgba(0,212,255,.5)';
-  chartCtx.shadowBlur=6;
-  chartCtx.stroke();
-  chartCtx.shadowBlur=0;
-
-  // Latest value dot
-  const last=hrHistory.length-1;
-  chartCtx.beginPath();
-  chartCtx.arc(scaleX(last),scaleY(hrHistory[last]),4,0,Math.PI*2);
-  chartCtx.fillStyle='#00d4ff';chartCtx.fill();
-
-  // Y-axis labels
-  chartCtx.fillStyle='#4a6a8a';
-  chartCtx.font='10px IBM Plex Mono, monospace';
-  chartCtx.textAlign='right';
-  for(let y=0;y<=4;y++){
-    const val=Math.round(min+(max-min)*(1-y/4));
-    const py=10+(ch-40)*y/4;
-    chartCtx.fillText(val,38,py+4);
-  }
 }
 
-async function fetchHeartFrame(){
+let faceMetricInterval=null;
+async function fetchFaceMetrics(){
   try{
-    const r=await fetch('/api/heart/frame');
-    if(!r.ok)return;
-    const d=await r.json();
-    if(d.error)return;
-
-    document.getElementById('heart-sim-badge').style.display = d.simulated ? 'inline' : 'none';
-    if(d.simulated){
-      // canvas animation running
-    } else {
-      stopHeartCanvasAnim();
-      drawImageOnCanvas(document.getElementById('heart-canvas'), d.image);
-    }
-
-    // HR display
-    const hc=d.at_risk?'danger':'ok';
-    hrVal.innerHTML=d.heart_rate+' <span style="font-size:1rem;color:var(--muted);">BPM</span>';
-    hrVal.className='metric-value large '+(d.at_risk?'danger':'');
-    hrStatus.innerHTML=pillHtml(hc, d.at_risk?'⚠ EARLY CARDIAC RISK DETECTED':'✓ NORMAL CONDITION');
-    cardCls(hrCard, hc);
-
-    // Secondaries
-    spo2Val.textContent=d.spo2+'%';
-    spo2Val.className='sv '+d.spo2_cls;
-    tempVal.textContent=d.temperature+'°C';
-    tempVal.className='sv '+d.temp_cls;
-    activityVal.textContent=d.activity+'/10';
-    hrvVal.textContent=d.hrv+' ms';
-
-    // Chart
-    if(d.hr_history){
-      hrHistory.length=0;
-      d.hr_history.forEach(v=>hrHistory.push(v));
-      drawChart();
-    }
-  }catch(e){console.error('heart frame error',e);}
+    const r=await fetch('/api/face/frame');const d=await r.json();
+    document.getElementById('stress-val').textContent=d.stress+' / 100';
+    fillBar(document.getElementById('stress-bar'),d.stress,cls(d.stress_cls));
+    document.getElementById('stress-pill').innerHTML=pillHtml(d.stress_cls,d.stress>70?'⚠ HIGH STRESS':d.stress>45?'△ MODERATE':'✓ NORMAL');
+    cardCls(document.getElementById('stress-card'),d.stress_cls);
+    document.getElementById('fatigue-val').textContent=d.fatigue+' / 100';
+    fillBar(document.getElementById('fatigue-bar'),d.fatigue,cls(d.fatigue_cls));
+    document.getElementById('fatigue-pill').innerHTML=pillHtml(d.fatigue_cls,d.fatigue>70?'⚠ HIGH FATIGUE':d.fatigue>45?'△ MODERATE':'✓ NORMAL');
+    cardCls(document.getElementById('fatigue-card'),d.fatigue_cls);
+  }catch(e){}
 }
 
-document.getElementById('heart-start-btn').addEventListener('click',()=>{
-  if(heartInterval)return;
-  startHeartCanvasAnim();
-  fetch('/api/heart/reset');
-  heartInterval=setInterval(fetchHeartFrame,1000);
-  fetchHeartFrame();
+function startHeartStream(){
+  if(heartActive)return;heartActive=true;
+  const img=document.getElementById('heart-stream');
+  const canvas=document.getElementById('heart-canvas');
+  canvas.style.display='block';img.style.display='none';
+  heartCanvasAnim=startCanvasAnim('heart-canvas','HEART MONITOR',heartCanvasAnim);
+  img.src='/stream/heart?t='+Date.now();
+  img.onload=()=>{
+    canvas.style.display='none';img.style.display='block';
+    stopAnim(heartCanvasAnim);heartCanvasAnim=null;
+    document.getElementById('heart-sim-badge').style.display='none';
+  };
+  img.onerror=()=>{
+    canvas.style.display='block';img.style.display='none';
+    document.getElementById('heart-sim-badge').style.display='inline';
+    if(!heartCanvasAnim) heartCanvasAnim=startCanvasAnim('heart-canvas','HEART MONITOR',null);
+  };
   document.getElementById('heart-start-btn').disabled=true;
   document.getElementById('heart-stop-btn').disabled=false;
-});
-document.getElementById('heart-stop-btn').addEventListener('click',()=>{
-  clearInterval(heartInterval);heartInterval=null;
-  stopHeartCanvasAnim();
+}
+
+function stopHeartStream(){
+  heartActive=false;
+  document.getElementById('heart-stream').src='';
+  stopAnim(heartCanvasAnim);heartCanvasAnim=null;
   document.getElementById('heart-start-btn').disabled=false;
   document.getElementById('heart-stop-btn').disabled=true;
-});
-
-// ─────────────────────────────────────────────
-// CORRELATION HEATMAP
-// ─────────────────────────────────────────────
-
-async function loadHeatmap(){
-  try{
-    const r=await fetch('/api/correlation');
-    const d=await r.json();
-    const cols=d.columns;
-    const mat=d.matrix;
-
-    // Color scale: -1 → cyan, 0 → dark, +1 → green
-    function heatColor(v){
-      if(v>0){
-        const t=v;
-        const r=Math.round(0*(1-t)+0*t);
-        const g=Math.round(212*(1-t)+255*t);
-        const b=Math.round(255*(1-t)+157*t);
-        return `rgba(${r},${g},${b},${0.15+t*0.5})`;
-      }else{
-        const t=-v;
-        return `rgba(255,69,96,${0.1+t*0.4})`;
-      }
-    }
-
-    let html='<table class="heatmap"><thead><tr><th></th>';
-    cols.forEach(c=>html+=`<th>${c}</th>`);
-    html+='</tr></thead><tbody>';
-    mat.forEach((row,i)=>{
-      html+=`<tr><th style="text-align:left;padding-right:12px;color:var(--muted);">${cols[i]}</th>`;
-      row.forEach(v=>{
-        const bg=heatColor(v);
-        const txt=v===1?'1.00':v.toFixed(2);
-        html+=`<td style="background:${bg};">${txt}</td>`;
-      });
-      html+='</tr>';
-    });
-    html+='</tbody></table>';
-    document.getElementById('heatmap-wrap').innerHTML=html;
-  }catch(e){
-    document.getElementById('heatmap-wrap').innerHTML=
-      '<p style="font-family:var(--mono);font-size:.65rem;color:var(--muted);">Could not load correlation data.</p>';
-  }
 }
-loadHeatmap();
 
-// ─────────────────────────────────────────────
-// AUTO-START active module camera
-// ─────────────────────────────────────────────
-const activeModule='{{ module }}';
-if(activeModule==='face'){  startFaceCanvasAnim(); document.getElementById('face-start-btn').click(); }
-if(activeModule==='heart'){ startHeartCanvasAnim(); document.getElementById('heart-start-btn').click(); }
+document.getElementById('face-start-btn').addEventListener('click',startFaceStream);
+document.getElementById('face-stop-btn').addEventListener('click',stopFaceStream);
+document.getElementById('heart-start-btn').addEventListener('click',startHeartStream);
+document.getElementById('heart-stop-btn').addEventListener('click',stopHeartStream);
 
-// ══════════════════════════════════════════════
-// ① SSE STREAMING
-// ══════════════════════════════════════════════
-let sseSource = null;
-let liveVitals = {};
-let unreadAlerts = 0;
+// ══════════════════════════════════════
+// ① SSE VITALS STREAM
+// ══════════════════════════════════════
+let sseSource=null,liveVitals={},unreadAlerts=0;
+const hrHistory=[];
+const chartCanvas=document.getElementById('hr-chart-canvas');
+const chartCtx=chartCanvas.getContext('2d');
 
 function connectSSE(){
-  if(sseSource) sseSource.close();
-  sseSource = new EventSource('/api/stream');
+  if(sseSource)sseSource.close();
+  sseSource=new EventSource('/api/stream');
 
-  sseSource.addEventListener('connected', ()=>{
-    document.getElementById('stream-dot').classList.add('live');
-    document.getElementById('stream-label').textContent = 'SSE Live';
+  sseSource.addEventListener('connected',()=>{
+    document.getElementById('sse-dot').classList.add('live');
+    document.getElementById('sse-label').textContent='SSE Live';
   });
 
-  sseSource.addEventListener('vitals', e=>{
-    const d = JSON.parse(e.data);
-    liveVitals = d;
-    // Update heart module if active
-    if(document.getElementById('page-heart').classList.contains('active')){
-      hrVal.innerHTML = d.heart_rate + ' <span style="font-size:1rem;color:var(--muted);">BPM</span>';
-      hrVal.className = 'metric-value large ' + (d.at_risk ? 'danger' : '');
-      hrStatus.innerHTML = pillHtml(d.at_risk?'danger':'ok',
-        d.at_risk ? '⚠ EARLY CARDIAC RISK DETECTED' : '✓ NORMAL CONDITION');
-      cardCls(hrCard, d.at_risk?'danger':'ok');
-      spo2Val.textContent = d.spo2+'%'; spo2Val.className='sv '+d.spo2_cls;
-      tempVal.textContent = d.temperature+'°C'; tempVal.className='sv '+d.temp_cls;
-      activityVal.textContent = d.activity+'/10';
-      hrvVal.textContent = d.hrv+' ms';
-      if(d.hr_history){ hrHistory.length=0; d.hr_history.forEach(v=>hrHistory.push(v)); drawChart(); }
+  sseSource.addEventListener('vitals',e=>{
+    const d=JSON.parse(e.data);liveVitals=d;
+    updateChatVitalsBar(d);
+    // Update heart module metrics (always, even if module not active — keeps data fresh)
+    document.getElementById('hr-val').innerHTML=
+      d.heart_rate+' <span style="font-size:1rem;color:var(--muted);">BPM</span>';
+    document.getElementById('hr-val').className='metric-value large '+(d.at_risk?'danger':'');
+    document.getElementById('hr-status').innerHTML=pillHtml(d.at_risk?'danger':'ok',
+      d.at_risk?'⚠ CARDIAC RISK DETECTED':'✓ NORMAL CONDITION');
+    cardCls(document.getElementById('hr-card'),d.at_risk?'danger':'ok');
+    document.getElementById('spo2-val').textContent=d.spo2+'%';
+    document.getElementById('spo2-val').className='sv '+d.spo2_cls;
+    document.getElementById('temp-val').textContent=d.temperature+'°C';
+    document.getElementById('temp-val').className='sv '+d.temp_cls;
+    document.getElementById('act-val').textContent=d.activity+'/10';
+    document.getElementById('hrv-val').textContent=d.hrv+' ms';
+    if(d.hr_history){hrHistory.length=0;d.hr_history.forEach(v=>hrHistory.push(v));drawChart();}
+  });
+
+  // ② AUTO-CALL on critical event
+  sseSource.addEventListener('auto_call',e=>{
+    const d=JSON.parse(e.data);
+    const contact=d.contact||{};
+    showAutocallBanner(contact,d.reason||'Emergency detected');
+  });
+
+  // ② Alert log
+  sseSource.addEventListener('alert',e=>{
+    const d=JSON.parse(e.data);
+    addAlert(d);
+    showToast(d.title,d.level==='critical'?'critical':d.level==='warning'?'warning':'info');
+  });
+
+  // ③ Browser push notification
+  sseSource.addEventListener('notification',e=>{
+    const d=JSON.parse(e.data);
+    showToast('🔔 '+d.title,d.level||'info');
+    if(Notification.permission==='granted'){
+      const n=new Notification(d.title,{body:d.body,icon:'/favicon.ico',
+        requireInteraction:d.urgent||false});
+      if(d.urgent) setTimeout(()=>n.close(),8000);
     }
   });
 
-  sseSource.addEventListener('alert', e=>{
-    const d = JSON.parse(e.data);
-    addAlertToPanel(d);
-    showToast(d.title, d.level==='critical'?'critical':d.level==='warning'?'warning':'info');
-    // Browser notification
-    if(Notification.permission === 'granted'){
-      new Notification('VitalSense AI — '+d.title, {body: d.message, icon: '/favicon.ico'});
-    }
+  sseSource.addEventListener('alerts_cleared',()=>{
+    document.getElementById('alert-list').innerHTML=
+      '<p style="font-family:var(--mono);font-size:.62rem;color:var(--muted);text-align:center;padding:2rem;">Cleared.</p>';
+    unreadAlerts=0;updateBadge();
   });
 
-  sseSource.addEventListener('notification', e=>{
-    const d = JSON.parse(e.data);
-    showToast('🔔 '+d.title+': '+d.body, d.level||'info');
-    if(Notification.permission === 'granted'){
-      new Notification(d.title, {body: d.body});
-    }
-  });
-
-  sseSource.addEventListener('alerts_cleared', ()=>{
-    document.getElementById('alert-list').innerHTML =
-      '<p style="font-family:var(--mono);font-size:.65rem;color:var(--muted);text-align:center;padding:2rem;">Alerts cleared.</p>';
-    unreadAlerts = 0; updateBadge();
-  });
-
-  sseSource.onerror = ()=>{
-    document.getElementById('stream-dot').classList.remove('live');
-    document.getElementById('stream-label').textContent = 'Reconnecting…';
-    setTimeout(connectSSE, 3000);
+  sseSource.onerror=()=>{
+    document.getElementById('sse-dot').classList.remove('live');
+    document.getElementById('sse-label').textContent='Reconnecting…';
+    setTimeout(connectSSE,3000);
   };
 }
 connectSSE();
 
-// ══════════════════════════════════════════════
-// ② EMERGENCY ALERTS
-// ══════════════════════════════════════════════
-function openEmergency(){ document.getElementById('emergency-panel').classList.add('open'); }
-function closeEmergency(){ document.getElementById('emergency-panel').classList.remove('open'); }
+// ══════════════════════════════════════
+// HR CHART
+// ══════════════════════════════════════
+function drawChart(){
+  chartCanvas.width=chartCanvas.offsetWidth||700;
+  const cw=chartCanvas.width,ch=130;chartCanvas.height=ch;
+  chartCtx.clearRect(0,0,cw,ch);
+  if(hrHistory.length<2)return;
+  const mn=Math.min(...hrHistory)-5,mx=Math.max(...hrHistory)+5;
+  const sy=v=>(ch-20)-(v-mn)/(mx-mn)*(ch-40)+10;
+  const sx=i=>i/(hrHistory.length-1)*cw;
+  chartCtx.strokeStyle='rgba(30,51,84,.5)';chartCtx.lineWidth=1;
+  for(let y=0;y<=4;y++){const py=10+(ch-40)*y/4;chartCtx.beginPath();chartCtx.moveTo(0,py);chartCtx.lineTo(cw,py);chartCtx.stroke();}
+  const g=chartCtx.createLinearGradient(0,0,0,ch);
+  g.addColorStop(0,'rgba(0,212,255,.22)');g.addColorStop(1,'rgba(0,212,255,0)');
+  chartCtx.beginPath();chartCtx.moveTo(sx(0),ch);
+  hrHistory.forEach((v,i)=>chartCtx.lineTo(sx(i),sy(v)));
+  chartCtx.lineTo(sx(hrHistory.length-1),ch);chartCtx.closePath();
+  chartCtx.fillStyle=g;chartCtx.fill();
+  chartCtx.beginPath();hrHistory.forEach((v,i)=>i===0?chartCtx.moveTo(sx(i),sy(v)):chartCtx.lineTo(sx(i),sy(v)));
+  chartCtx.strokeStyle='#00d4ff';chartCtx.lineWidth=2;
+  chartCtx.shadowColor='rgba(0,212,255,.4)';chartCtx.shadowBlur=5;chartCtx.stroke();chartCtx.shadowBlur=0;
+  const last=hrHistory.length-1;
+  chartCtx.beginPath();chartCtx.arc(sx(last),sy(hrHistory[last]),4,0,Math.PI*2);
+  chartCtx.fillStyle='#00d4ff';chartCtx.fill();
+}
+window.addEventListener('resize',drawChart);
 
-async function triggerEmergency(){
-  const reason = prompt('Describe the emergency (optional):') || 'Manual emergency trigger';
-  const r = await fetch('/api/emergency/trigger',{
-    method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({reason, vitals: liveVitals})
-  });
-  const d = await r.json();
+// ══════════════════════════════════════
+// ② EMERGENCY + AUTO-CALL
+// ══════════════════════════════════════
+function openEmergency(){document.getElementById('emergency-overlay').classList.add('open');}
+function closeEmergency(){document.getElementById('emergency-overlay').classList.remove('open');}
+
+async function manualEmergency(){
   closeEmergency();
-  showToast('🚨 Emergency alert sent to '+d.contacts.length+' contacts','critical');
-  addAlertToPanel(d.alert);
+  const r=await fetch('/api/emergency/trigger',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({reason:'Manual emergency trigger',vitals:liveVitals})
+  });
+  const d=await r.json();
+  if(d.contact && d.contact.phone){
+    showAutocallBanner(d.contact,'Manual emergency triggered');
+  }
 }
 
-// Alert Panel
-function openAlerts(){
-  document.getElementById('alert-panel').classList.add('open');
-  unreadAlerts=0; updateBadge();
+let autocallTimer=null;
+function showAutocallBanner(contact,reason){
+  const banner=document.getElementById('autocall-banner');
+  const link=document.getElementById('autocall-link');
+  const text=document.getElementById('autocall-text');
+  text.textContent=`📞 Auto-calling ${contact.name||'Emergency Contact'} — ${reason}`;
+  link.href='tel:'+(contact.phone||'108');
+  banner.classList.add('show');
+  document.getElementById('main-layout').style.marginTop='52px';
+  // Auto-open phone dialer on mobile after short delay
+  clearTimeout(autocallTimer);
+  autocallTimer=setTimeout(()=>{
+    if(contact.phone) window.location.href='tel:'+contact.phone;
+  },1200);
 }
-function closeAlerts(){ document.getElementById('alert-panel').classList.remove('open'); }
 
-function addAlertToPanel(a){
-  const list = document.getElementById('alert-list');
-  const empty = list.querySelector('p');
-  if(empty) empty.remove();
-  const div = document.createElement('div');
-  div.className = 'alert-item ' + a.level;
-  div.innerHTML = `
-    <div class="alert-time">${a.timestamp}</div>
-    <div class="alert-title-txt">${a.title}</div>
-    <div class="alert-msg">${a.message}</div>`;
-  list.prepend(div);
-  unreadAlerts++;
-  updateBadge();
-  // Keep max 20 shown
-  const items = list.querySelectorAll('.alert-item');
-  if(items.length > 20) items[items.length-1].remove();
+function dismissAutocall(){
+  clearTimeout(autocallTimer);
+  document.getElementById('autocall-banner').classList.remove('show');
+  document.getElementById('main-layout').style.marginTop='0';
+}
+
+// ══════════════════════════════════════
+// ALERTS PANEL
+// ══════════════════════════════════════
+function openAlerts(){document.getElementById('alert-panel').classList.add('open');unreadAlerts=0;updateBadge();}
+function closeAlerts(){document.getElementById('alert-panel').classList.remove('open');}
+
+function addAlert(a){
+  const list=document.getElementById('alert-list');
+  const empty=list.querySelector('p');if(empty)empty.remove();
+  const div=document.createElement('div');div.className='alert-item '+a.level;
+  div.innerHTML=`<div class="a-time">${a.timestamp}</div><div class="a-title">${a.title}</div><div class="a-msg">${a.message}</div>`;
+  list.prepend(div);unreadAlerts++;updateBadge();
+  const items=list.querySelectorAll('.alert-item');
+  if(items.length>25)items[items.length-1].remove();
 }
 
 function updateBadge(){
-  ['alert-count-badge','fab-badge'].forEach(id=>{
-    const el = document.getElementById(id);
-    if(!el) return;
-    if(unreadAlerts>0){
-      el.textContent = unreadAlerts > 9 ? '9+' : unreadAlerts;
-      el.classList.add('show');
-    } else {
-      el.classList.remove('show');
-    }
+  ['sidebar-badge','fab-badge'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    if(unreadAlerts>0){el.textContent=unreadAlerts>9?'9+':unreadAlerts;el.classList.add('show');}
+    else el.classList.remove('show');
   });
 }
 
@@ -967,168 +866,125 @@ async function clearAlerts(){
   await fetch('/api/alerts/clear',{method:'POST'});
 }
 
-// Load existing alerts on page load
-async function loadAlerts(){
-  const r = await fetch('/api/alerts');
-  const d = await r.json();
-  d.alerts.forEach(a => addAlertToPanel(a));
-}
-loadAlerts();
+// Load existing alerts
+(async()=>{try{const r=await fetch('/api/alerts');const d=await r.json();d.alerts.forEach(a=>addAlert(a));}catch(e){}})();
 
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════
 // ③ NOTIFICATIONS
-// ══════════════════════════════════════════════
-function showToast(msg, level='info'){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast ' + level + ' show';
-  setTimeout(()=>t.classList.remove('show'), 4000);
+// ══════════════════════════════════════
+if('Notification' in window && Notification.permission==='default'){
+  Notification.requestPermission().then(p=>{
+    if(p==='granted') showToast('✓ Notifications enabled','info');
+  });
+}
+async function testNotif(){
+  await fetch('/api/notifications/test',{method:'POST'});
 }
 
-// Request notification permission on load
-function requestNotificationPermission(){
-  if('Notification' in window && Notification.permission === 'default'){
-    Notification.requestPermission();
-  }
-}
-requestNotificationPermission();
+// ══════════════════════════════════════
+// VOICE RECORDER
+// ══════════════════════════════════════
+document.getElementById('record-btn').addEventListener('click',async()=>{
+  const btn=document.getElementById('record-btn');const dur=parseInt(document.getElementById('dur-slider').value);
+  const status=document.getElementById('rec-status');
+  btn.disabled=true;
+  status.innerHTML=`<div class="card card-warn" style="padding:.7rem 1rem;">
+    <span class="pulse-dot"></span><span style="font-family:var(--mono);font-size:.68rem;color:var(--warn);">RECORDING… ${dur}s</span></div>`;
+  try{
+    const r=await fetch('/api/voice/record',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({duration:dur})});
+    const d=await r.json();
+    status.innerHTML='';
+    document.getElementById('voice-results').style.display='block';
+    ['anxiety','asthma'].forEach(k=>{
+      document.getElementById(k+'-val').textContent=d[k]+'%';
+      fillBar(document.getElementById(k+'-bar'),d[k],cls(d[k+'_cls']));
+      document.getElementById(k+'-pill').innerHTML=pillHtml(d[k+'_cls'],d[k+'_lbl']);
+      cardCls(document.getElementById(k+'-card'),d[k+'_cls']);
+    });
+  }catch(e){status.innerHTML='<span class="pill pill-danger">Recording failed</span>';}
+  btn.disabled=false;
+});
 
-// ══════════════════════════════════════════════
-// ④ AI CHATBOT
-// ══════════════════════════════════════════════
-let chatHistory = [];
-let chatOpen = false;
+// ══════════════════════════════════════
+// HEATMAP
+// ══════════════════════════════════════
+(async()=>{
+  try{
+    const r=await fetch('/api/correlation');const d=await r.json();
+    const cols=d.columns,mat=d.matrix;
+    function hc(v){return v>0?`rgba(0,${Math.round(212*(1-v)+255*v)},${Math.round(255*(1-v)+157*v)},${.15+v*.5})`:`rgba(255,69,96,${.1+(-v)*.4})`;}
+    let h='<table class="heatmap"><thead><tr><th></th>';
+    cols.forEach(c=>h+=`<th>${c}</th>`);h+='</tr></thead><tbody>';
+    mat.forEach((row,i)=>{
+      h+=`<tr><th style="text-align:left;padding-right:10px;color:var(--muted);">${cols[i]}</th>`;
+      row.forEach(v=>h+=`<td style="background:${hc(v)};">${v===1?'1.00':v.toFixed(2)}</td>`);
+      h+='</tr>';
+    });
+    h+='</tbody></table>';
+    document.getElementById('heatmap-wrap').innerHTML=h;
+  }catch(e){document.getElementById('heatmap-wrap').innerHTML='<p style="font-family:var(--mono);font-size:.62rem;color:var(--muted);">Could not load.</p>';}
+})();
+
+// ══════════════════════════════════════
+// ④ CHATBOT WITH LIVE VITALS
+// ══════════════════════════════════════
+let chatHistory=[],chatOpen=false;
 
 function toggleChat(){
-  chatOpen = !chatOpen;
-  document.getElementById('chat-panel').classList.toggle('open', chatOpen);
-  document.getElementById('fab-group').style.display = chatOpen ? 'none' : 'flex';
-  if(chatOpen) document.getElementById('chat-input').focus();
+  chatOpen=!chatOpen;
+  document.getElementById('chat-panel').classList.toggle('open',chatOpen);
+  document.getElementById('fab-group').style.display=chatOpen?'none':'flex';
+  if(chatOpen)document.getElementById('chat-input').focus();
+}
+
+function updateChatVitalsBar(v){
+  const bar=document.getElementById('chat-vitals-bar');
+  bar.textContent=`Live: HR=${v.heart_rate}bpm  SpO₂=${v.spo2}%  Temp=${v.temperature}°C  Risk=${v.at_risk?'⚠YES':'✓NO'}`;
+  bar.style.color=v.at_risk?'var(--danger)':'var(--muted)';
 }
 
 async function sendChat(){
-  const input = document.getElementById('chat-input');
-  const msg = input.value.trim();
-  if(!msg) return;
-  input.value = '';
+  const input=document.getElementById('chat-input');
+  const msg=input.value.trim();if(!msg)return;
+  input.value='';appendChat(msg,'user');
+  chatHistory.push({role:'user',content:msg});
 
-  // Add user message
-  appendChatMsg(msg, 'user');
-  chatHistory.push({role:'user', content: msg});
-
-  // Typing indicator
-  const typingId = 'typing-'+Date.now();
-  const msgs = document.getElementById('chat-messages');
-  const typing = document.createElement('div');
-  typing.className = 'chat-msg bot typing';
-  typing.id = typingId;
-  typing.textContent = '● ● ●';
-  msgs.appendChild(typing);
-  msgs.scrollTop = msgs.scrollHeight;
+  const tid='t'+Date.now();
+  const typing=document.createElement('div');
+  typing.className='chat-msg bot typing';typing.id=tid;typing.textContent='● ● ●';
+  document.getElementById('chat-messages').appendChild(typing);
+  document.getElementById('chat-messages').scrollTop=9999;
 
   try{
-    const r = await fetch('/api/chat',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        message: msg,
-        vitals: liveVitals,
-        history: chatHistory.slice(-6)
-      })
-    });
-    const d = await r.json();
-    document.getElementById(typingId)?.remove();
-    const reply = d.reply || 'Sorry, I could not process that.';
-    appendChatMsg(reply, 'bot');
-    chatHistory.push({role:'assistant', content: reply});
-    if(chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
+    const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:msg,history:chatHistory.slice(-8)})});
+    const d=await r.json();
+    document.getElementById(tid)?.remove();
+    const reply=d.reply||'Sorry, no response.';
+    appendChat(reply,'bot');
+    chatHistory.push({role:'assistant',content:reply});
+    if(chatHistory.length>20)chatHistory=chatHistory.slice(-20);
+    // Refresh vitals bar if vitals returned
+    if(d.vitals && Object.keys(d.vitals).length) updateChatVitalsBar(d.vitals);
   }catch(e){
-    document.getElementById(typingId)?.remove();
-    appendChatMsg('Connection error. Please try again.', 'bot');
+    document.getElementById(tid)?.remove();
+    appendChat('Connection error. Please try again.','bot');
   }
 }
 
-function appendChatMsg(text, role){
-  const msgs = document.getElementById('chat-messages');
-  const div = document.createElement('div');
-  div.className = 'chat-msg ' + role;
-  // Simple markdown bold
-  div.innerHTML = text.replace(/\*\*(.*?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
+function appendChat(text,role){
+  const msgs=document.getElementById('chat-messages');
+  const div=document.createElement('div');div.className='chat-msg '+role;
+  div.innerHTML=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+  msgs.appendChild(div);msgs.scrollTop=9999;
 }
 
+// ══════════════════════════════════════
+// AUTO-START active module
+// ══════════════════════════════════════
+const activeModule='{{ module }}';
+if(activeModule==='face')  startFaceStream();
+if(activeModule==='heart') startHeartStream();
 </script>
-
-<!-- ══ NOTIFICATION TOAST ══ -->
-<div class="toast" id="toast"></div>
-
-<!-- ══ ALERT PANEL ══ -->
-<div class="alert-panel" id="alert-panel">
-  <div class="alert-panel-head">
-    <span class="alert-panel-title">◈ ALERT LOG</span>
-    <div style="display:flex;gap:.6rem;">
-      <button class="btn" style="padding:.3rem .8rem;font-size:.58rem;" onclick="clearAlerts()">Clear All</button>
-      <button class="btn btn-danger" style="padding:.3rem .8rem;font-size:.58rem;" onclick="closeAlerts()">✕</button>
-    </div>
-  </div>
-  <div class="alert-list" id="alert-list">
-    <p style="font-family:var(--mono);font-size:.65rem;color:var(--muted);text-align:center;padding:2rem;">
-      No alerts yet. Monitoring active.
-    </p>
-  </div>
-</div>
-
-<!-- ══ EMERGENCY PANEL ══ -->
-<div class="emergency-panel" id="emergency-panel">
-  <div class="emergency-box">
-    <div class="emergency-title">🚨 EMERGENCY RESPONSE</div>
-    <p style="font-family:var(--mono);font-size:.62rem;color:var(--muted);margin-bottom:1.2rem;">
-      Direct emergency contacts. Click CALL to initiate.
-    </p>
-    <div id="contact-list">
-      {% for c in emergency_contacts %}
-      <div class="contact-card">
-        <div>
-          <div class="contact-name">{{ c.name }}</div>
-          <div class="contact-role">{{ c.role }}</div>
-        </div>
-        <a class="call-btn" href="tel:{{ c.phone }}">📞 CALL</a>
-      </div>
-      {% endfor %}
-    </div>
-    <hr class="sep" style="margin:1rem 0;">
-    <button class="btn btn-danger" style="width:100%;" onclick="triggerEmergency()">
-      🚨 TRIGGER FULL EMERGENCY ALERT
-    </button>
-    <button class="btn" style="width:100%;margin-top:.6rem;" onclick="closeEmergency()">Cancel</button>
-  </div>
-</div>
-
-<!-- ══ CHATBOT PANEL ══ -->
-<div class="chat-panel" id="chat-panel">
-  <div class="chat-head">
-    <span class="chat-head-title"><span class="pulse-dot"></span>AI HEALTH ASSISTANT</span>
-    <button onclick="toggleChat()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;">✕</button>
-  </div>
-  <div class="chat-messages" id="chat-messages">
-    <div class="chat-msg bot">Hello! I'm your VitalSense AI assistant. Ask me about your vitals, health risks, or emergency procedures.</div>
-  </div>
-  <div class="chat-input-row">
-    <input class="chat-input" id="chat-input" type="text" placeholder="Ask about your health data..."
-           onkeydown="if(event.key==='Enter')sendChat()"/>
-    <button class="chat-send" onclick="sendChat()">▶</button>
-  </div>
-</div>
-
-<!-- ══ FAB BUTTONS (shown when chat is closed) ══ -->
-<div class="fab-group" id="fab-group">
-  <button class="fab fab-emergency" onclick="openEmergency()" title="Emergency">🚨</button>
-  <button class="fab fab-alert" onclick="openAlerts()" title="Alerts">
-    🔔<span class="alert-badge-count" id="fab-badge"></span>
-  </button>
-  <button class="fab fab-chat" onclick="toggleChat()" title="AI Chatbot">🤖</button>
-</div>
-
 </body>
 </html>
