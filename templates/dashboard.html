@@ -185,7 +185,9 @@ table.heatmap td{padding:6px 8px;text-align:center;border-radius:4px;color:var(-
         <div class="card">
           <div class="cam-wrap">
             <span class="pulse-dot"></span>LIVE FEED
-            <img id="face-img" src="" alt="Camera feed" onerror="this.style.opacity='.3'"/>
+            <span id="face-sim-badge" style="display:none;margin-left:8px;font-size:.55rem;color:#ffb800;letter-spacing:.1em;">◈ SIMULATION MODE</span>
+            <canvas id="face-canvas" width="640" height="360"
+              style="width:100%;border-radius:8px;margin-top:.5rem;border:1px solid var(--border);display:block;background:#080d14;"></canvas>
           </div>
         </div>
 
@@ -274,7 +276,9 @@ table.heatmap td{padding:6px 8px;text-align:center;border-radius:4px;color:var(-
         <div class="card">
           <div class="cam-wrap">
             <span class="pulse-dot"></span>LIVE FEED
-            <img id="heart-img" src="" alt="Camera feed"/>
+            <span id="heart-sim-badge" style="display:none;margin-left:8px;font-size:.55rem;color:#ffb800;letter-spacing:.1em;">◈ SIMULATION MODE</span>
+            <canvas id="heart-canvas" width="640" height="360"
+              style="width:100%;border-radius:8px;margin-top:.5rem;border:1px solid var(--border);display:block;background:#080d14;"></canvas>
           </div>
         </div>
 
@@ -362,8 +366,90 @@ function cardCls(card,c){
 // FACE SCANNER
 // ─────────────────────────────────────────────
 
+// ── Canvas drawing utility ───────────────────
+function drawFeedCanvas(canvas, label, simulated){
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#080d14';ctx.fillRect(0,0,W,H);
+  // Grid
+  ctx.strokeStyle='rgba(0,40,60,.6)';ctx.lineWidth=1;
+  for(let x=0;x<W;x+=52){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=52){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  // ECG
+  const t=Date.now()/1000;
+  ctx.beginPath();ctx.strokeStyle='rgba(0,200,240,.7)';ctx.lineWidth=2;
+  ctx.shadowColor='rgba(0,200,240,.5)';ctx.shadowBlur=6;
+  for(let i=0;i<W;i+=2){
+    const phase=(i/W)*Math.PI*8+t*2;
+    const p=((phase%(2*Math.PI))+(2*Math.PI))%(2*Math.PI);
+    let v;
+    if(p<0.15)v=p/0.15*50;
+    else if(p<0.25)v=50*(1-(p-0.15)/0.1);
+    else if(p<0.35)v=-13*(1-(p-0.25)/0.1);
+    else v=Math.sin(phase)*5;
+    const y=H*0.6-v;
+    if(i===0)ctx.moveTo(i,y);else ctx.lineTo(i,y);
+  }
+  ctx.stroke();ctx.shadowBlur=0;
+  // Face bracket
+  const cx=W/2,cy=H/2-10,r=65;
+  ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);
+  ctx.strokeStyle='rgba(0,200,240,.5)';ctx.lineWidth=1;ctx.stroke();
+  const ls=12;
+  [[cx-r,cy-r,1,1],[cx+r,cy-r,-1,1],[cx-r,cy+r,1,-1],[cx+r,cy+r,-1,-1]].forEach(([px,py,dx,dy])=>{
+    ctx.beginPath();ctx.strokeStyle='#00ff9d';ctx.lineWidth=2;
+    ctx.moveTo(px,py);ctx.lineTo(px+dx*ls,py);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px,py+dy*ls);ctx.stroke();
+  });
+  // Scan line
+  const scanY=cy-r+((Date.now()/16)%(r*2));
+  if(scanY>cy-r&&scanY<cy+r){
+    ctx.beginPath();ctx.strokeStyle='rgba(0,212,255,.25)';ctx.lineWidth=1;
+    ctx.moveTo(cx-r,scanY);ctx.lineTo(cx+r,scanY);ctx.stroke();
+  }
+  // Labels
+  ctx.font='12px IBM Plex Mono, monospace';
+  ctx.fillStyle='rgba(0,200,240,.9)';
+  ctx.fillText(label,16,22);
+  if(simulated){
+    ctx.font='10px IBM Plex Mono, monospace';
+    ctx.fillStyle='rgba(55,85,110,.9)';
+    ctx.fillText('SIMULATION — no camera on cloud server',16,H-12);
+  }
+}
+
+let faceAnimId=null;
+function startFaceCanvasAnim(){
+  const canvas=document.getElementById('face-canvas');
+  if(faceAnimId)return;
+  (function loop(){faceAnimId=requestAnimationFrame(loop);drawFeedCanvas(canvas,'FACE SCANNER',true);})();
+}
+function stopFaceCanvasAnim(){cancelAnimationFrame(faceAnimId);faceAnimId=null;}
+
+let heartAnimId=null;
+function startHeartCanvasAnim(){
+  const canvas=document.getElementById('heart-canvas');
+  if(heartAnimId)return;
+  (function loop(){heartAnimId=requestAnimationFrame(loop);drawFeedCanvas(canvas,'HEART MONITOR',true);})();
+}
+function stopHeartCanvasAnim(){cancelAnimationFrame(heartAnimId);heartAnimId=null;}
+
+// Draw base64 image onto canvas
+function drawImageOnCanvas(canvas, b64){
+  const img=new Image();
+  img.onload=()=>{
+    const ctx=canvas.getContext('2d');
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+  };
+  img.src='data:image/jpeg;base64,'+b64;
+}
+
+// ─────────────────────────────────────────────
+// FACE SCANNER
+// ─────────────────────────────────────────────
+
 let faceInterval=null;
-const faceImg     = document.getElementById('face-img');
 const stressVal   = document.getElementById('stress-val');
 const stressBar   = document.getElementById('stress-bar');
 const stressPill  = document.getElementById('stress-pill');
@@ -380,7 +466,15 @@ async function fetchFaceFrame(){
     const d=await r.json();
     if(d.error)return;
 
-    faceImg.src='data:image/jpeg;base64,'+d.image;
+    // Show sim badge if no real camera
+    document.getElementById('face-sim-badge').style.display = d.simulated ? 'inline' : 'none';
+
+    if(d.simulated){
+      // Canvas animation already running — no need to draw static image
+    } else {
+      stopFaceCanvasAnim();
+      drawImageOnCanvas(document.getElementById('face-canvas'), d.image);
+    }
 
     stressVal.textContent = d.stress+' / 100';
     fillBar(stressBar, d.stress, cls(d.stress_cls));
@@ -396,6 +490,7 @@ async function fetchFaceFrame(){
 
 document.getElementById('face-start-btn').addEventListener('click',()=>{
   if(faceInterval)return;
+  startFaceCanvasAnim();  // immediate visual feedback
   faceInterval=setInterval(fetchFaceFrame,1000);
   fetchFaceFrame();
   document.getElementById('face-start-btn').disabled=true;
@@ -403,6 +498,7 @@ document.getElementById('face-start-btn').addEventListener('click',()=>{
 });
 document.getElementById('face-stop-btn').addEventListener('click',()=>{
   clearInterval(faceInterval);faceInterval=null;
+  stopFaceCanvasAnim();
   document.getElementById('face-start-btn').disabled=false;
   document.getElementById('face-stop-btn').disabled=true;
 });
@@ -459,7 +555,6 @@ document.getElementById('record-btn').addEventListener('click',async()=>{
 
 let heartInterval=null;
 const hrHistory=[];
-const heartImg  =document.getElementById('heart-img');
 const hrVal     =document.getElementById('hr-val');
 const hrStatus  =document.getElementById('hr-status');
 const hrCard    =document.getElementById('hr-card');
@@ -543,7 +638,13 @@ async function fetchHeartFrame(){
     const d=await r.json();
     if(d.error)return;
 
-    heartImg.src='data:image/jpeg;base64,'+d.image;
+    document.getElementById('heart-sim-badge').style.display = d.simulated ? 'inline' : 'none';
+    if(d.simulated){
+      // canvas animation running
+    } else {
+      stopHeartCanvasAnim();
+      drawImageOnCanvas(document.getElementById('heart-canvas'), d.image);
+    }
 
     // HR display
     const hc=d.at_risk?'danger':'ok';
@@ -571,6 +672,7 @@ async function fetchHeartFrame(){
 
 document.getElementById('heart-start-btn').addEventListener('click',()=>{
   if(heartInterval)return;
+  startHeartCanvasAnim();
   fetch('/api/heart/reset');
   heartInterval=setInterval(fetchHeartFrame,1000);
   fetchHeartFrame();
@@ -579,6 +681,7 @@ document.getElementById('heart-start-btn').addEventListener('click',()=>{
 });
 document.getElementById('heart-stop-btn').addEventListener('click',()=>{
   clearInterval(heartInterval);heartInterval=null;
+  stopHeartCanvasAnim();
   document.getElementById('heart-start-btn').disabled=false;
   document.getElementById('heart-stop-btn').disabled=true;
 });
@@ -633,8 +736,8 @@ loadHeatmap();
 // AUTO-START active module camera
 // ─────────────────────────────────────────────
 const activeModule='{{ module }}';
-if(activeModule==='face')  document.getElementById('face-start-btn').click();
-if(activeModule==='heart') document.getElementById('heart-start-btn').click();
+if(activeModule==='face'){  startFaceCanvasAnim(); document.getElementById('face-start-btn').click(); }
+if(activeModule==='heart'){ startHeartCanvasAnim(); document.getElementById('heart-start-btn').click(); }
 </script>
 </body>
 </html>
